@@ -1,0 +1,38 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Return Book — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="form-card">
+        <h1>Accept Book Return</h1>
+
+        <div class="book-meta-grid">
+            <div><strong>Book:</strong> {{ issue.book.title }}</div>
+            <div><strong>Member:</strong> {{ issue.user.username }}</div>
+            <div><strong>Issue Date:</strong> {{ issue.issue_date }}</div>
+            <div><strong>Due Date:</strong> {{ issue.due_date }}</div>
+            <div><strong>Late Days (if returned today):</strong> {{ issue.late_days }}</div>
+            <div><strong>Fine Amount:</strong>
+                {% if issue.calculated_fine %}
+                    <span class="text-danger">₹{{ issue.calculated_fine }}</span>
+                {% else %}
+                    ₹0 (no fine)
+                {% endif %}
+            </div>
+        </div>
+
+        {% if issue.is_overdue %}
+            <div class="alert alert-warning">This book is overdue. A fine will be applied upon return.</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Confirm Return</button>
+                <a href="{% url 'issued_books' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

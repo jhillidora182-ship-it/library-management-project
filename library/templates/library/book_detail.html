@@ -1,0 +1,63 @@
+{% extends 'library/base.html' %}
+
+{% block title %}{{ book.title }} — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <a href="{% url 'book_list' %}" class="back-link">&larr; Back to Books</a>
+
+    <div class="book-detail-layout">
+        <div class="book-detail-cover">
+            {% if book.image %}
+                <img src="{{ book.image.url }}" alt="{{ book.title }}">
+            {% else %}
+                <div class="book-cover-placeholder book-cover-placeholder-lg">📖</div>
+            {% endif %}
+        </div>
+
+        <div class="book-detail-info">
+            <h1>{{ book.title }}</h1>
+            <p class="book-author-lg">by {{ book.author }}</p>
+
+            {% if book.category %}<span class="tag">{{ book.category.name }}</span>{% endif %}
+            {% if book.is_available %}
+                <span class="badge badge-available">Available</span>
+            {% else %}
+                <span class="badge badge-unavailable">Not Available</span>
+            {% endif %}
+
+            <p class="book-description">{{ book.description|default:"No description available for this book." }}</p>
+
+            <div class="book-meta-grid">
+                <div><strong>ISBN:</strong> {{ book.isbn }}</div>
+                <div><strong>Publisher:</strong> {{ book.publisher|default:"—" }}</div>
+                <div><strong>Published:</strong> {{ book.publication_date|default:"—" }}</div>
+                <div><strong>Total Copies:</strong> {{ book.total_copies }}</div>
+                <div><strong>Available Copies:</strong> {{ book.available_copies }}</div>
+                <div><strong>Added:</strong> {{ book.created_date|date:"M d, Y" }}</div>
+            </div>
+
+            <div class="book-detail-actions">
+                {% if user.is_authenticated %}
+                    {% if not is_librarian %}
+                        {% if already_issued %}
+                            <span class="badge badge-info">You already have this book issued</span>
+                        {% elif book.is_available %}
+                            <a href="{% url 'request_issue_book' book.pk %}" class="btn btn-primary">Request / Issue This Book</a>
+                        {% else %}
+                            <button class="btn btn-disabled" disabled>Currently Unavailable</button>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}?next={% url 'book_detail' book.pk %}" class="btn btn-primary">Login to Borrow</a>
+                {% endif %}
+
+                {% if is_librarian %}
+                    <a href="{% url 'edit_book' book.pk %}" class="btn btn-outline">Edit Book</a>
+                    <a href="{% url 'delete_book' book.pk %}" class="btn btn-danger">Delete Book</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

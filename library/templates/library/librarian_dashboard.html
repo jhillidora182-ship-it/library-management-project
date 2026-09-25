@@ -1,0 +1,104 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Librarian Dashboard — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="page-header">
+        <h1>Librarian Dashboard 🗂️</h1>
+        <p>Overview of the library's books, members, and activity.</p>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon">📚</div>
+            <div class="dash-stat-number">{{ total_books }}</div>
+            <div class="dash-stat-label">Total Books</div>
+        </div>
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon">✅</div>
+            <div class="dash-stat-number">{{ available_books }}</div>
+            <div class="dash-stat-label">Available Copies</div>
+        </div>
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon">📖</div>
+            <div class="dash-stat-number">{{ issued_books_count }}</div>
+            <div class="dash-stat-label">Issued Books</div>
+        </div>
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon">👥</div>
+            <div class="dash-stat-number">{{ total_users }}</div>
+            <div class="dash-stat-label">Registered Users</div>
+        </div>
+        <div class="dash-stat-card dash-stat-warning">
+            <div class="dash-stat-icon">⚠️</div>
+            <div class="dash-stat-number">{{ overdue_count }}</div>
+            <div class="dash-stat-label">Overdue Books</div>
+        </div>
+    </div>
+
+    <div class="dashboard-quick-actions">
+        <a href="{% url 'add_book' %}" class="btn btn-primary">+ Add Book</a>
+        <a href="{% url 'issue_book' %}" class="btn btn-primary">Issue Book</a>
+        <a href="{% url 'book_list' %}" class="btn btn-outline">Manage Books</a>
+        <a href="{% url 'issued_books' %}" class="btn btn-outline">View All Issued Books</a>
+        <a href="{% url 'registered_users' %}" class="btn btn-outline">View Registered Users</a>
+    </div>
+
+    <div class="two-col-grid">
+        <div>
+            <h2 class="section-title">Recently Issued Books</h2>
+            {% if recent_issued %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>Book</th><th>User</th><th>Issue Date</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for issue in recent_issued %}
+                        <tr>
+                            <td>{{ issue.book.title }}</td>
+                            <td>{{ issue.user.username }}</td>
+                            <td>{{ issue.issue_date }}</td>
+                            <td>
+                                {% if issue.status == 'overdue' %}
+                                    <span class="badge badge-danger">Overdue</span>
+                                {% elif issue.status == 'returned' %}
+                                    <span class="badge badge-success">Returned</span>
+                                {% else %}
+                                    <span class="badge badge-info">Issued</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="empty-state">No books issued yet.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <h2 class="section-title">Recently Returned Books</h2>
+            {% if recent_returned %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>Book</th><th>User</th><th>Return Date</th><th>Fine</th></tr></thead>
+                    <tbody>
+                        {% for issue in recent_returned %}
+                        <tr>
+                            <td>{{ issue.book.title }}</td>
+                            <td>{{ issue.user.username }}</td>
+                            <td>{{ issue.return_date }}</td>
+                            <td>{% if issue.fine_amount %}₹{{ issue.fine_amount }}{% else %}—{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="empty-state">No books returned yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

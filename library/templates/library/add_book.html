@@ -1,0 +1,19 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Add Book — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="form-card">
+        <h1>Add New Book</h1>
+        <form method="post" enctype="multipart/form-data" class="stacked-form" novalidate>
+            {% csrf_token %}
+            {% include 'library/_book_form_fields.html' %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Add Book</button>
+                <a href="{% url 'book_list' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

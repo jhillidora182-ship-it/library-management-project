@@ -1,0 +1,20 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Delete {{ book.title }} — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="form-card form-card-danger">
+        <h1>Delete Book</h1>
+        <p>Are you sure you want to delete <strong>"{{ book.title }}"</strong> by {{ book.author }}? This action cannot be undone.</p>
+
+        <form method="post" class="confirm-delete-form">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">Yes, Delete Book</button>
+                <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

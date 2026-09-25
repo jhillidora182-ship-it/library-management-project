@@ -1,0 +1,49 @@
+{% extends 'library/base.html' %}
+
+{% block title %}My Profile — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="form-card">
+        <h1>My Profile</h1>
+        <p class="auth-subtitle">Update your contact details below.</p>
+
+        <form method="post" class="stacked-form" novalidate>
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}<div class="form-error">{{ form.email.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.phone.id_for_label }}">Phone</label>
+                {{ form.phone }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.address.id_for_label }}">Address</label>
+                {{ form.address }}
+            </div>
+
+            <div class="profile-readonly">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Account Type:</strong> {% if is_librarian %}Librarian{% else %}Member{% endif %}</p>
+                <p><strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

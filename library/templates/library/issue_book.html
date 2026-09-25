@@ -1,0 +1,49 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Issue Book — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="form-card">
+        {% if self_service %}
+            <h1>Issue "{{ book.title }}"</h1>
+            <p>You are about to issue this book to yourself. It will be due in {{ request.session.book_issue_days|default:"14" }} days from today. Returning it late will incur a fine of ₹5/day.</p>
+
+            <div class="book-detail-actions">
+                <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline">Cancel</a>
+            </div>
+
+            <form method="post" id="confirmIssueForm">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="confirmIssueBtn">Confirm — Issue This Book</button>
+                </div>
+            </form>
+        {% else %}
+            <h1>Issue a Book to a Member</h1>
+            <p>Select a member and an available book to issue it manually.</p>
+
+            <form method="post" class="stacked-form" novalidate>
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.user.id_for_label }}">Member</label>
+                    {{ form.user }}
+                    {% if form.user.errors %}<div class="form-error">{{ form.user.errors|striptags }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.book.id_for_label }}">Book</label>
+                    {{ form.book }}
+                    {% if form.book.errors %}<div class="form-error">{{ form.book.errors|striptags }}</div>{% endif %}
+                </div>
+                {% if form.non_field_errors %}
+                    <div class="form-error">{{ form.non_field_errors|striptags }}</div>
+                {% endif %}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Issue Book</button>
+                    <a href="{% url 'issued_books' %}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

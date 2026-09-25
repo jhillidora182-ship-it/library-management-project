@@ -1,0 +1,80 @@
+{% extends 'library/base.html' %}
+
+{% block title %}My Dashboard — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="page-header">
+        <h1>Welcome, {{ user.first_name|default:user.username }} 👋</h1>
+        <p>Here's a summary of your library activity.</p>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon">📚</div>
+            <div class="dash-stat-number">{{ total_issued }}</div>
+            <div class="dash-stat-label">Total Books Issued</div>
+        </div>
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon">📖</div>
+            <div class="dash-stat-number">{{ currently_issued.count }}</div>
+            <div class="dash-stat-label">Currently Issued</div>
+        </div>
+        <div class="dash-stat-card">
+            <div class="dash-stat-icon">✅</div>
+            <div class="dash-stat-number">{{ returned_count }}</div>
+            <div class="dash-stat-label">Returned Books</div>
+        </div>
+        <div class="dash-stat-card dash-stat-warning">
+            <div class="dash-stat-icon">⚠️</div>
+            <div class="dash-stat-number">{{ overdue_count }}</div>
+            <div class="dash-stat-label">Overdue Books</div>
+        </div>
+        <div class="dash-stat-card dash-stat-danger">
+            <div class="dash-stat-icon">💰</div>
+            <div class="dash-stat-number">₹{{ total_fine }}</div>
+            <div class="dash-stat-label">Total Fine Due</div>
+        </div>
+    </div>
+
+    <div class="dashboard-quick-actions">
+        <a href="{% url 'book_list' %}" class="btn btn-primary">Browse Books</a>
+        <a href="{% url 'my_books' %}" class="btn btn-outline">View My Books</a>
+        <a href="{% url 'profile' %}" class="btn btn-outline">Edit Profile</a>
+    </div>
+
+    <h2 class="section-title">Currently Issued Books</h2>
+    {% if currently_issued %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in currently_issued %}
+                <tr>
+                    <td><a href="{% url 'book_detail' issue.book.pk %}">{{ issue.book.title }}</a></td>
+                    <td>{{ issue.issue_date }}</td>
+                    <td>{{ issue.due_date }}</td>
+                    <td>
+                        {% if issue.is_overdue %}
+                            <span class="badge badge-danger">Overdue</span>
+                        {% else %}
+                            <span class="badge badge-success">Issued</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="empty-state">You don't have any books issued right now. <a href="{% url 'book_list' %}">Browse the catalogue</a>.</p>
+    {% endif %}
+</section>
+{% endblock %}

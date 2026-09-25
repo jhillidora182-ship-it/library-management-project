@@ -1,0 +1,88 @@
+{% extends 'library/base.html' %}
+{% load static %}
+
+{% block title %}BookNest Library — Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Welcome to BookNest Library</h1>
+        <p class="hero-subtitle">Discover, borrow, and manage books all in one place. Your next great read is just a search away.</p>
+
+        <form action="{% url 'book_list' %}" method="get" class="hero-search">
+            <input type="text" name="q" placeholder="Search by title, author, or ISBN...">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <div class="hero-actions">
+            <a href="{% url 'book_list' %}" class="btn btn-primary btn-lg">Browse Books</a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg">Register</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="stats-grid container">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_books }}</div>
+            <div class="stat-label">Total Books</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_categories }}</div>
+            <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_members }}</div>
+            <div class="stat-label">Registered Members</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_issued }}</div>
+            <div class="stat-label">Books Currently Issued</div>
+        </div>
+    </div>
+</section>
+
+<section class="container section">
+    <h2 class="section-title">Featured Books</h2>
+    {% if featured_books %}
+    <div class="books-grid">
+        {% for book in featured_books %}
+        <div class="book-card">
+            <div class="book-cover">
+                {% if book.image %}
+                    <img src="{{ book.image.url }}" alt="{{ book.title }}">
+                {% else %}
+                    <div class="book-cover-placeholder">📖</div>
+                {% endif %}
+                <span class="badge badge-available">Available</span>
+            </div>
+            <div class="book-card-body">
+                <h3><a href="{% url 'book_detail' book.pk %}">{{ book.title }}</a></h3>
+                <p class="book-author">by {{ book.author }}</p>
+                {% if book.category %}<span class="tag">{{ book.category.name }}</span>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="empty-state">No books available right now. Please check back soon.</p>
+    {% endif %}
+</section>
+
+<section class="container section about-section">
+    <div class="about-grid">
+        <div>
+            <h2 class="section-title">Why BookNest?</h2>
+            <ul class="feature-list">
+                <li>✅ Browse thousands of titles across every category</li>
+                <li>✅ Instant book issuing with automatic due-date tracking</li>
+                <li>✅ Transparent fine calculation for late returns</li>
+                <li>✅ Personal dashboard to track your reading history</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}

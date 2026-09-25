@@ -1,0 +1,58 @@
+{% extends 'library/base.html' %}
+
+{% block title %}My Books — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="page-header">
+        <h1>My Books</h1>
+        <a href="{% url 'book_list' %}" class="btn btn-primary">Browse More Books</a>
+    </div>
+
+    {% if issues %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                    <th>Fine</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in issues %}
+                <tr>
+                    <td><a href="{% url 'book_detail' issue.book.pk %}">{{ issue.book.title }}</a></td>
+                    <td>{{ issue.issue_date }}</td>
+                    <td>{{ issue.due_date }}</td>
+                    <td>{{ issue.return_date|default:"—" }}</td>
+                    <td>
+                        {% if issue.status == 'overdue' %}
+                            <span class="badge badge-danger">Overdue</span>
+                        {% elif issue.status == 'returned' %}
+                            <span class="badge badge-success">Returned</span>
+                        {% else %}
+                            <span class="badge badge-info">Issued</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if issue.fine_amount %}
+                            <span class="text-danger">₹{{ issue.fine_amount }}</span>
+                            {% if issue.fine_paid %}<span class="badge badge-success">Paid</span>{% else %}<span class="badge badge-danger">Unpaid</span>{% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="empty-state">You haven't borrowed any books yet. <a href="{% url 'book_list' %}">Browse the catalogue</a> to get started.</p>
+    {% endif %}
+</section>
+{% endblock %}

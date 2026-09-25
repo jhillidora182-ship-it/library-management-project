@@ -1,0 +1,48 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Registered Users — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="page-header">
+        <h1>Registered Users</h1>
+    </div>
+
+    {% if users %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Type</th>
+                    <th>Joined</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.get_full_name|default:"—" }}</td>
+                    <td>{{ u.email|default:"—" }}</td>
+                    <td>{{ u.profile.phone|default:"—" }}</td>
+                    <td>
+                        {% if u.profile.is_staff_member %}
+                            <span class="badge badge-info">Librarian</span>
+                        {% else %}
+                            <span class="badge badge-success">Member</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ u.date_joined|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="empty-state">No registered users yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

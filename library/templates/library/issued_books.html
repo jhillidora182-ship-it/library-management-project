@@ -1,0 +1,82 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Issued Books — BookNest Library{% endblock %}
+
+{% block content %}
+<section class="container section">
+    <div class="page-header">
+        <h1>All Issued Books</h1>
+        <a href="{% url 'issue_book' %}" class="btn btn-primary">+ Issue New Book</a>
+    </div>
+
+    <form method="get" class="search-filter-bar">
+        <select name="status" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {% if issues %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                    <th>Fine</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in issues %}
+                <tr>
+                    <td>{{ issue.book.title }}</td>
+                    <td>{{ issue.user.username }}</td>
+                    <td>{{ issue.issue_date }}</td>
+                    <td>{{ issue.due_date }}</td>
+                    <td>{{ issue.return_date|default:"—" }}</td>
+                    <td>
+                        {% if issue.status == 'overdue' %}
+                            <span class="badge badge-danger">Overdue</span>
+                        {% elif issue.status == 'returned' %}
+                            <span class="badge badge-success">Returned</span>
+                        {% else %}
+                            <span class="badge badge-info">Issued</span>
+                        {% endif %}
+                    </td>
+                    <td>{% if issue.fine_amount %}₹{{ issue.fine_amount }}{% else %}—{% endif %}</td>
+                    <td>
+                        {% if issue.status != 'returned' %}
+                            <a href="{% url 'return_book' issue.pk %}" class="btn btn-sm btn-outline">Return</a>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">&laquo; Prev</a>
+        {% endif %}
+        <span class="pagination-current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% else %}
+        <p class="empty-state">No issued books found.</p>
+    {% endif %}
+</section>
+{% endblock %}
