@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 📚 BookNest — Library Management System
 
 A full-stack Library Management System built with **Django** (Python), **SQLite**, and vanilla **HTML5 / CSS3 / JavaScript**, using Django's MVT (Model-View-Template) architecture. Designed as a portfolio-ready project for a Full Stack Python Developer fresher.
@@ -235,3 +236,7 @@ Visit **http://127.0.0.1:8000/admin/** and log in with the superuser you created
 - This project uses **SQLite only**, as required — no external database server needed.
 - `DEBUG = True` is set for local development. Set it to `False` and configure `ALLOWED_HOSTS` before any real deployment.
 - The `SECRET_KEY` in `settings.py` is a development key — replace it with an environment-variable-based secret for production use.
+=======
+# library-management-project
+A full-stack Library Management System developed using Python, Django, SQLite, HTML, CSS, and JavaScript. The project helps manage books, users, and library records through a simple and user-friendly interface.
+>>>>>>> 4a9e14c6125393016bfd2c4fce88b68c0b5b50f3
